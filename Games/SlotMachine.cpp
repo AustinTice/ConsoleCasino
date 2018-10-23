@@ -4,7 +4,6 @@
 
 /*
 TODO:
-Banking system,
 Possible configuration of a database to store users money,
 Max/Min betting
 */
@@ -20,6 +19,10 @@ int main(){
 	int totalMoneyPlayed = 0;
 	// total money won from the machine
 	int totalMoneyWon = 0;
+	// Keep track of the users initial bank account
+	int usersBeginningBalance = 0;
+	// Keep track of the bank account throughout the program
+	int usersRunningBalance = 0;
 	// Temporary variable to hold how much money the player just put into the machine
 	int moneyEntered = 0;
 	// variable to check and see if the player wants to keep playing the game
@@ -31,7 +34,10 @@ int main(){
 	// Beginning output with the player
 	std::cout << "Welcome to the Tice Casino!\n\nWhat is your name?" << std::endl;
 	std::getline(std::cin, name);
-	std::cout << "How much money would you like to enter into the slot machine?" << std::endl;
+	std::cout << "How much money would you like to load into your account today?" << std::endl;
+	std::cin >> usersBeginningBalance;
+	usersRunningBalance = usersBeginningBalance;
+	std::cout << "Awesome! How much money would you like to use on your first spin?" << std::endl;
 	std::cin >> moneyEntered;
 	// This is my flag loop that I check at the end to see if the player would like to spin again
 	while(isPlaying == true){
@@ -40,6 +46,13 @@ int main(){
 			std::cout << "Sorry, we only take denominations in quantities of $5. Try another amount." << std::endl;
 			std::cin >> moneyEntered;
 		}
+		// Checking to make sure that the user hasn't tried to play an amount that they dont have on their account.
+		while(moneyEntered > usersRunningBalance){
+			std::cout << "You have insufficient funds. Please try another amount." << std::endl;
+			std::cin >> moneyEntered;
+		}
+		// subtract the amount played from the users bank account
+		usersRunningBalance -= moneyEntered;
 		// Keeping up with how many times the user spins.
 		timesPlayed++;
 		// after we get an acceptable amount of money we can go ahead and add it to our total played
@@ -71,12 +84,14 @@ int main(){
 			std::cout << "JACKPOT! You just won 3 times your original amount of " << moneyEntered
 					  << ".\nMeaning you just won " << moneyEntered * 3 << std::endl;
 			totalMoneyWon += (moneyEntered * 3);
+			usersRunningBalance += (moneyEntered * 3);
 		}
 		// Checking if all the spins are the same then the player will win 3 times their original amount input
 		else if(spin1 == spin2 || spin2 == spin3 || spin1 == spin3){
 			std::cout << "INCREDIBLE! You just won 2 times your original amount of " << moneyEntered
 					  << ".\nMeaning you just won " << moneyEntered * 2 << std::endl;
 			totalMoneyWon += (moneyEntered * 2);
+			usersRunningBalance += (moneyEntered * 2);
 		}
 		// default case if the player has no matches and loses
 		else{
@@ -103,6 +118,8 @@ int main(){
 	}
 	// Print out their game statistics if they decided that they were done playing
 	std::cout << "\nThanks so much for playing at Tice Casino!\nHere are the statistics from your stay:" << std::endl
+			  << "You started with: $" << usersBeginningBalance << std::endl
+			  << "You ended with: $" << usersRunningBalance << std::endl
 			  << "You won: $" << totalMoneyWon << std::endl
 			  << "You spent: $" << totalMoneyPlayed << std::endl
 			  << "Times you played: " << timesPlayed << std::endl << std::endl;
